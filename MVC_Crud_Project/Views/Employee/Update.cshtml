@@ -1,0 +1,141 @@
+﻿@model MVC_Crud_Project.Models.Employee
+@{
+}
+<div class="row">
+    <div class="col-6 offset-3">
+        <form Id="first-form" asp-action="Update" asp-controller="Employee" method="post">
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" type="text" name="name"
+                       id="name" required />
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Mobile"></label>
+                <input asp-for="Mobile" class="form-control" type="number" name="mobile"
+                       id="mobile" required />
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" type="email" name="email"
+                       id="email" required />
+
+            </div>
+            <div class="form-group">
+                <label asp-for="CountryId">Select Country</label>
+                <select asp-for="CountryId" class="form-control Country">
+
+                    @foreach (var item in ViewBag.CountryList)
+                    {
+                        if (Model.CountryId== item.CountryId)
+                        {
+                            <option value="@item.CountryId">@item.CountryName</option>
+                        }
+                        <option value="@item.CountryId">@item.CountryName</option>
+                    }
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="StateId">Select State</label>
+                <select asp-for="StateId" class="form-control State">
+                    @*<option value="">Select</option>*@
+                    @foreach (var item in ViewBag.StateList)
+                    {
+                        if (Model.StateId == item.StateId)
+                        {
+                            <option value="@item.StateId">@item.StateName</option>
+                        }
+                        <option value="@item.StateId">@item.StateName</option>
+                    }
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CityId">Select City</label>
+                <select asp-for="CityId" class="form-control City">
+                    @foreach (var item in ViewBag.CityList)
+                    {
+                        if (Model.CityId == item.CityId)
+                        {
+                            <option value="@item.CityId">@item.CityName</option>
+                        }
+                        <option value="@item.CityId">@item.CityName</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+
+                <label asp-for="DOB"></label>
+                <input asp-for="DOB" class="form-control" type="date" name="dob"
+                       id="dob" required />
+
+            </div>
+            <div class="form-group">
+                <button type="Submit" class="btn btn-success">Update</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script src="~/js/jquery.min.js"></script>
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>*@
+<script>
+    $(document).ready(function () {
+        GetCountries();
+        $(".Country").change(function () {
+            var id = $(".Country").val();
+            console.log(id);
+            GetStates(id);
+        })
+        $(".State").change(function () {
+            var id = $(".State").val();
+            console.log(id);
+            GetCities(id);
+        })
+
+    })
+    function GetCountries()
+    {
+        $.get('@Url.Action("GetCountries","Employee")', function (Result) {
+            debugger;
+            console.log(Result)
+            $.each(Result, function (i, data) {
+                console.log(i, data)
+                $(".Country").append("<option value=" + data.countryId+">"+data.countryName +"</option>")
+            })
+        })
+    }
+    function GetStates(CountryId) {
+        $.get('@Url.Action("GetStates", "Employee")', { id: CountryId }, function (Result) {
+
+            console.log(Result)
+            $(".State").empty();
+            $(".State").append("<option>Select</option>");
+            $.each(Result, function (i, data) {
+                console.log(i, data)
+                $(".State").append("<option value=" + data.stateId + ">" + data.stateName + "</option>")
+            })
+        })
+
+    }
+    function GetCities(StateId)
+    {
+        $.get('@Url.Action("GetCities", "Employee")', { id: StateId }, function (Result) {
+
+            console.log(Result)
+            $(".City").empty();
+            $(".City").append("<option>Select</option>");
+
+            $.each(Result, function (i, data) {
+                console.log(i, data)
+                $(".City").append("<option value="+data.cityId+">"+data.cityName +"</option>")
+            })
+        })
+    }
+
+
+
+</script>
